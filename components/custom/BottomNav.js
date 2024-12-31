@@ -27,6 +27,18 @@ export default function BottomNav() {
         </Link>
 
 
+        {/* Menu */}
+        <Link
+        //   to="/menu"
+          href="/menu-pizza"
+          className={`navbtn ${
+            isActive("/menu-pizza") ? "b-nav-active" : "b-nav-inactive"
+          }`}
+        >
+          <Menu size={24} />
+          <span className="btn-text">Menu</span>
+        </Link>
+
 
         <Link
           href="/cart"
@@ -41,20 +53,8 @@ export default function BottomNav() {
 
 
 
-        {/* Menu */}
-        <Link
-        //   to="/menu"
-          href="/menu-pizza"
-          className={`navbtn ${
-            isActive("/menu-pizza") ? "b-nav-active" : "b-nav-inactive"
-          }`}
-        >
-          <Menu size={24} />
-          <span className="btn-text">Menu</span>
-        </Link>
-
         {/* Orders */}
-        <Link
+        {/* <Link
           href="/orders"
           className={`navbtn ${
             isActive("/orders") ? "b-nav-active" : "b-nav-inactive"
@@ -62,7 +62,7 @@ export default function BottomNav() {
         >
           <ShoppingBag size={24} />
           <span className="btn-text">Orders</span>
-        </Link>
+        </Link> */}
 
         {/* Account */}
         {/* <Link
@@ -76,7 +76,7 @@ export default function BottomNav() {
         </Link> */}
 
 <Link
-          href="/user"
+          href="/"
           className={`navbtn ${
             isActive("/user") ? "b-nav-active" : "b-nav-inactive"
           }`}

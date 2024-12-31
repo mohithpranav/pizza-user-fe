@@ -250,11 +250,11 @@ const page = () => {
     data-aos="zoom-in"
     data-aos-duration={1500}
     data-aos-offset={50}
-  ><span className="sub-title">Special for your perfect pizza choice</span>
-  <h1>Delicious Pizza</h1>
+  ><span className="sub-title">Love at first bite.</span>
+  <h1>Vino Pizza</h1>
   
     
-    <img className="custom-hero-pizza" src="assets/images/hero/pizza-2.png" alt="Hero" />
+    <img className="custom-hero-pizza" src="assets/images/hero/pizza-2-min.png" alt="Hero" />
    
     {/* Yellow Button */}
 
@@ -987,7 +987,7 @@ const page = () => {
                 data-aos-duration={1500}
                 data-aos-offset={50}
               >
-                <img src="assets/images/offer/offer-pizza.png" alt="Burger Image" />
+                <img src="assets/images/offer/offer-pizza-min.png" alt="Burger Image" />
                 <div
                   className="offer-badge"
                   style={{

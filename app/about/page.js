@@ -9,7 +9,7 @@ import Link from "next/link";
 const page = () => {
   return (
     <WellFoodLayout>
-      <PageBanner pageTitle={"About company"} pageName={"About Us"} />
+      {/* <PageBanner pageTitle={"About company"} pageName={"About Us"} /> */}
       <AboutUs3 />
       <Headline />
       {/* Food Category Area start */}

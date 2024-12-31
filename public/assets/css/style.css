@@ -11477,3 +11477,15 @@ line-height: 1rem;
 }
 
 
+.empty-cart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh; /* Full viewport height */
+  text-align: center;
+}
+
+.empty-cart-container h4 {
+  font-size: 24px;
+  color: #333; /* Customize the color as needed */
+}

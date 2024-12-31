@@ -28,25 +28,30 @@ const page = () => {
         <div className="container">
           
 
-<div className="shopping-cart-container">
-
-
-
-{cartItems.map((item, index) => (
-        <CartItem
-          key={index}
-          image={item.img || "assets/images/widgets/news1.jpg"} // Default image
-          title={item.title}
-          size={item.size}
-          ingredients={item.ingredients || []}
-          quantity={item.quantity}
-          price={Number(item.price).toFixed(2)}
-          onIncrement={() => dispatch(incrementQuantity(index))}
-          onDecrement={() => dispatch(decrementQuantity(index))}
-          onDelete={() => dispatch( removeItem(index))}
-        />
-      ))}
+        <div className="shopping-cart-container">
+  {cartItems.length === 0 ? (
+    <div className="empty-cart-container">
+    <h4>Oops! Looks like your pizza cart is as empty as your stomach before any meal! 🍕😄</h4>
+  </div>
+  
+  ) : (
+    cartItems.map((item, index) => (
+      <CartItem
+        key={index}
+        image={item.img || "assets/images/widgets/news1.jpg"} // Default image
+        title={item.title}
+        size={item.size}
+        ingredients={item.ingredients || []}
+        quantity={item.quantity}
+        price={Number(item.price).toFixed(2)}
+        onIncrement={() => dispatch(incrementQuantity(index))}
+        onDecrement={() => dispatch(decrementQuantity(index))}
+        onDelete={() => dispatch(removeItem(index))}
+      />
+    ))
+  )}
 </div>
+
 
 
 
@@ -58,7 +63,7 @@ const page = () => {
       
       {/* Continue Shopping and Clear Cart */}
       <div className="shopping-actions d-flex align-items-center justify-content-center w-100 ">
-        <Link href="shop" className="theme-btn style-two me-3">
+        <Link href="/menu-pizza" className="theme-btn style-two me-3">
         Back to Pizzas <i className="fas fa-angle-double-right" />
         </Link>
         <Link 
