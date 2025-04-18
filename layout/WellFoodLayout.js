@@ -9,7 +9,9 @@ import FixedBtn from "@/components/custom/FixedBtn";
 
 const WellFoodLayout = ({ children, bgBlack, footer }) => {
   useEffect(() => {
-    niceSelect();
+    if (process.env.NODE_ENV === "production") {
+      niceSelect();
+    }
     wellfoodUtility.animation();
     console.log(bgBlack);
     if (bgBlack) {

@@ -227,6 +227,41 @@ const topItems =  [
         { name: "Ranch Dressing", quantity: 0, price:1, included: false },
       ]     },
     ]
+// app/page.js
+
+const banners = [
+  {
+    id: 1,
+    title: "SPECIALTY PIZZA",
+    img: "assets/images/banner/category-banner-three1.jpg",
+    style: "style-three",
+    delay: 0,
+    desc: "A selection of our most popular specialty pizzas.",
+    price: 399,
+    showSub: false,
+  },
+  {
+    id: 2,
+    title: "buy 1",
+    subtitle: "get free 1",
+    img: "assets/images/banner/category-banner-three2.jpg",
+    style: "style-four",
+    delay: 50,
+    desc: "Buy one and get one free combo offer.",
+    price: 499,
+    showSub: true,
+  },
+  {
+    id: 3,
+    title: "delicious fast foods",
+    img: "assets/images/banner/category-banner-three3.jpg",
+    style: "style-three",
+    delay: 100,
+    desc: "Enjoy our fast food combos at best prices.",
+    price: 299,
+    showSub: false,
+  },
+];
 
 
 const page = () => {
@@ -251,7 +286,7 @@ const page = () => {
     data-aos-duration={1500}
     data-aos-offset={50}
   ><span className="sub-title">Love at first bite.</span>
-  <h1>Vino Pizza</h1>
+  <h1>ADDISCOMBE</h1>
   
     
     <img className="custom-hero-pizza" src="assets/images/hero/pizza-2-min.png" alt="Hero" />
@@ -438,7 +473,54 @@ const page = () => {
 
 
       {/* Category Banner area start */}
+
+
       <div className="category-banner-area-two pb-85 rpb-65">
+  <div className="container-fluid">
+    <div className="row row-cols-lg-3 row-cols-sm-2 row-cols-1 justify-content-center">
+      {banners.map((banner) => (
+        <div
+          key={banner.id}
+          className="col"
+          data-aos="fade-up"
+          data-aos-delay={banner.delay}
+          data-aos-duration={1500}
+          data-aos-offset={50}
+        >
+          <div
+            className={`category-banner-item ${banner.style}`}
+            style={{
+              backgroundImage: `url(${banner.img})`,
+            }}
+          >
+            <h3>{banner.title}</h3>
+            {banner.showSub && <span className="get-one">{banner.subtitle}</span>}
+            <Link
+              href={{
+                pathname: "/product-details",
+                query: {
+                  title: banner.title,
+                  img: banner.img,
+                  desc: banner.desc,
+                  price: banner.price,
+                  combo:"True"
+                },
+              }}
+              className="theme-btn"
+            >
+              Shop now <i className="far fa-arrow-alt-right" />
+            </Link>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
+
+      
+      {/* <div className="category-banner-area-two pb-85 rpb-65">
         <div className="container-fluid">
           <div className="row row-cols-lg-3 row-cols-sm-2 row-cols-1 justify-content-center">
             <div
@@ -503,7 +585,7 @@ const page = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       {/* Category Banner area end */}
 
 

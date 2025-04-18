@@ -187,6 +187,7 @@ const page = () => {
             { name: "Pepperoni", quantity: 1,price:1, included: true },
             { name: "Mushrooms", quantity: 0,price:1, included: false },],
             toppings: [
+            
               { name: "Extra Cheese", quantity: 1,price:1, included: true },
               { name: "Bacon", quantity: 1,price:1, included: true },
               { name: "Pineapple", quantity: 0,price:1, included: false },

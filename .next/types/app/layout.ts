@@ -1,4 +1,4 @@
-// File: D:\Pizza\A-product\WellFood\React Template\app\layout.js
+// File: C:\Users\nishanth\Desktop\backup\Pizza\A-product\WellFood\React Template\app\layout.js
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
