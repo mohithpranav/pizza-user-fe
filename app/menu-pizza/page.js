@@ -1,4 +1,4 @@
-import AboutUs from "@/components/AboutUs";
+
 import Headline from "@/components/Headline";
 import OfferCard from "@/components/OfferCard";
 import PageBanner from "@/components/PageBanner";

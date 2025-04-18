@@ -627,12 +627,12 @@ const Header = () => {
                   <li>
                     <Link href="menu-pizza">M e n u</Link>
                   </li>
-                  <li>
+                  {/* <li>
                     <Link href="about">A b o u t - U s</Link>
                   </li>
                   <li>
                     <Link href="contact">C o n t a c t</Link>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </nav>
