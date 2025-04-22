@@ -1,668 +1,145 @@
-
+"use client";
+import { useState, useEffect } from "react";
 import Headline from "@/components/Headline";
 import OfferCard from "@/components/OfferCard";
 import PageBanner from "@/components/PageBanner";
 import RestaurantMenu from "@/components/RestaurantMenu";
 import WellFoodLayout from "@/layout/WellFoodLayout";
-const page = () => {
-  const items = [
-    {
-      id: 1,
-      title: "dessert",
-      icon: "flaticon-cupcake",
-      event: "food-tab1",
-      items: [
-        {
-          id: 1,
-          title: "beef burger",
-          price: "2",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food1.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1.5, included: true },
-            { name: "Tomato", quantity: 1,price:1.3, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0,price:1, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 2,
-          title: "Italian pizza",
-          price: "23",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food2.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1.5, included: true },
-            { name: "Tomato", quantity: 1,price:1.3, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0,price:1, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 3,
-          title: "Chicken roll",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food3.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1.5, included: true },
-            { name: "Tomato", quantity: 1,price:1.3, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0,price:1, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 4,
-          title: "shawarma",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food4.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1.5, included: true },
-            { name: "Tomato", quantity: 1,price:1.3, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0,price:1, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 5,
-          title: "Sea octopus",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food5.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1.5, included: true },
-            { name: "Tomato", quantity: 1,price:1.3, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0,price:1, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 6,
-          title: "Beef burger",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food6.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1.5, included: true },
-            { name: "Tomato", quantity: 1,price:1.3, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0,price:1, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 7,
-          title: "hot dog mustard",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food7.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1.5, included: true },
-            { name: "Tomato", quantity: 1,price:1.3, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-            
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0,price:1, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 8,
-          title: "hot dog mustard",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food8.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1.5, included: true },
-            { name: "Tomato", quantity: 1,price:1.3, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0,price:1, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "vegetarian",
-      icon: "flaticon-broccoli",
-      event: "food-tab2",
-      items: [
-        {
-          id: 3,
-          title: "Chicken roll",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food3.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1, included: true },
-            { name: "Tomato", quantity: 1,price:1, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 4,
-          title: "shawarma",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food4.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1, included: true },
-            { name: "Tomato", quantity: 1,price:1, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 1,
-          title: "beef burger",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food1.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1, included: true },
-            { name: "Tomato", quantity: 1,price:1, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 6,
-          title: "Beef burger",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food6.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1, included: true },
-            { name: "Tomato", quantity: 1,price:1, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 2,
-          title: "Italian pizza",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food2.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1, included: true },
-            { name: "Tomato", quantity: 1,price:1, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 8,
-          title: "hot dog mustard",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food8.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1, included: true },
-            { name: "Tomato", quantity: 1,price:1, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 9,
-          title: "Sea octopus",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food5.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1, included: true },
-            { name: "Tomato", quantity: 1,price:1, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-        {
-          id: 10,
-          title: "raw mince beef",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food8.png",
-          ingredients:[ { name: "Cheese", quantity: 1,price:1, included: true },
-            { name: "Tomato", quantity: 1,price:1, included: true },
-            { name: "Basil", quantity: 2,price:1, included: true },
-            { name: "Olives", quantity: 0,price:1, included: false },
-            { name: "Pepperoni", quantity: 1,price:1, included: true },
-            { name: "Mushrooms", quantity: 0,price:1, included: false },],
-            toppings: [
-              { name: "Extra Cheese", quantity: 1,price:1, included: true },
-              { name: "Bacon", quantity: 1,price:1, included: true },
-              { name: "Pineapple", quantity: 0,price:1, included: false },
-              { name: "Jalapenos", quantity: 0,price:1, included: false },
-              { name: "Onions", quantity: 1,price:1, included: true },
-              { name: "Green Peppers", quantity: 0, price:1,included: false },
-              { name: "Sausage", quantity: 1, price:1,included: true },
-              { name: "Spinach", quantity: 0,  price:1, included: false },
-              { name: "Anchovies", quantity: 0, included: false },
-              { name: "Garlic Sauce", quantity: 1, price:1, included: true },
-              { name: "Barbecue Sauce", quantity: 1, price:1, included: true },
-              { name: "Ranch Dressing", quantity: 0, price:1, included: false },
-            ],
-        },
-      ],
-    },
-    // {
-    //   id: 3,
-    //   title: "potatoes",
-    //   icon: "flaticon-fried-potatoes",
-    //   event: "food-tab3",
-    //   items: [
-    //     {
-    //       id: 2,
-    //       title: "Italian pizza",
-    //       price: "25",
-    //       decs: "Diverse menu features array delectable",
-    //       img: "assets/images/food/pm-food2.png",
-    //     },
-    //     {
-    //       id: 3,
-    //       title: "Chicken roll",
-    //       price: "25",
-    //       decs: "Diverse menu features array delectable",
-    //       img: "assets/images/food/pm-food3.png",
-    //     },
-    //     {
-    //       id: 1,
-    //       title: "beef burger",
-    //       price: "25",
-    //       decs: "Diverse menu features array delectable",
-    //       img: "assets/images/food/pm-food1.png",
-    //     },
-    //     {
-    //       id: 4,
-    //       title: "shawarma",
-    //       price: "25",
-    //       decs: "Diverse menu features array delectable",
-    //       img: "assets/images/food/pm-food4.png",
-    //     },
-    //     {
-    //       id: 8,
-    //       title: "hot dog mustard",
-    //       price: "25",
-    //       decs: "Diverse menu features array delectable",
-    //       img: "assets/images/food/pm-food7.png",
-    //     },
-    //     {
-    //       id: 5,
-    //       title: "Sea octopus",
-    //       price: "25",
-    //       decs: "Diverse menu features array delectable",
-    //       img: "assets/images/food/pm-food5.png",
-    //     },
-    //     {
-    //       id: 6,
-    //       title: "Beef burger",
-    //       price: "25",
-    //       decs: "Diverse menu features array delectable",
-    //       img: "assets/images/food/pm-food6.png",
-    //     },
-    //     {
-    //       id: 10,
-    //       title: "raw mince beef",
-    //       price: "25",
-    //       decs: "Diverse menu features array delectable",
-    //       img: "assets/images/food/pm-food8.png",
-    //     },
-    //   ],
-    // },
-    {
-      id: 4,
-      title: "seafood",
-      icon: "flaticon-crab",
-      event: "food-tab4",
-      items: [
-        {
-          id: 5,
-          title: "Sea octopus",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food5.png",
-        },
-        {
-          id: 1,
-          title: "beef burger",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food1.png",
-        },
-        {
-          id: 2,
-          title: "Italian pizza",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food2.png",
-        },
-        {
-          id: 3,
-          title: "Chicken roll",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food3.png",
-        },
-        {
-          id: 4,
-          title: "shawarma",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food4.png",
-        },
-        {
-          id: 6,
-          title: "Beef burger",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food6.png",
-        },
-        {
-          id: 7,
-          title: "raw mince beef",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food8.png",
-        },
-        {
-          id: 8,
-          title: "hot dog mustard",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food7.png",
-        },
-      ],
-    },
-    {
-      id: 5,
-      title: "drinks",
-      icon: "flaticon-poinsettia",
-      event: "food-tab5",
-      items: [
-        {
-          id: 2,
-          title: "Italian pizza",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food2.png",
-        },
-        {
-          id: 1,
-          title: "beef burger",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food1.png",
-        },
-        {
-          id: 3,
-          title: "Chicken roll",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food3.png",
-        },
-        {
-          id: 4,
-          title: "shawarma",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food4.png",
-        },
-        {
-          id: 5,
-          title: "Sea octopus",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food5.png",
-        },
-        {
-          id: 6,
-          title: "Beef burger",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food6.png",
-        },
-        {
-          id: 7,
-          title: "hot dog mustard",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food7.png",
-        },
-        {
-          id: 8,
-          title: "hot dog mustard",
-          price: "25",
-          decs: "Diverse menu features array delectable",
-          img: "assets/images/food/pm-food8.png",
-        },
-      ],
-    },
-  ];
+import {
+  fetchAllCategories,
+  fetchPizzasByCategory,
+} from "@/services/menuPizzaServices";
+
+// Helper function to get icon based on category name
+const getCategoryIcon = (categoryName) => {
+  const iconMap = {
+    "Non-Vegetarian": "flaticon-cupcake",
+    Vegetarian: "flaticon-broccoli",
+    Seafood: "flaticon-crab",
+    Drinks: "flaticon-poinsettia",
+    // Add more mappings as needed
+  };
+
+  return iconMap[categoryName] || "flaticon-cupcake"; // Default icon
+};
+
+// Helper function to get base price from sizes
+const getBasePrice = (sizes) => {
+  try {
+    const sizeObj = typeof sizes === "string" ? JSON.parse(sizes) : sizes;
+    return sizeObj.SMALL || "10"; // Default to small size price or 10
+  } catch (e) {
+    return "10"; // Default price if parsing fails
+  }
+};
+
+const MenuPizzaPage = () => {
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [pizzas, setPizzas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch all categories on component mount
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchAllCategories();
+        if (response && response.data) {
+          setCategories(response.data);
+          // Set the first category as selected by default
+          if (response.data.length > 0) {
+            setSelectedCategory(response.data[0].id);
+          }
+        }
+      } catch (err) {
+        console.error("Error loading categories:", err);
+        setError("Failed to load categories. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  // Fetch pizzas when a category is selected
+  useEffect(() => {
+    const loadPizzas = async () => {
+      if (!selectedCategory) return;
+
+      try {
+        setLoading(true);
+        const response = await fetchPizzasByCategory(selectedCategory);
+        if (response && response.data && response.data.pizzas) {
+          setPizzas(response.data.pizzas);
+        }
+      } catch (err) {
+        console.error("Error loading pizzas:", err);
+        setError("Failed to load pizzas. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPizzas();
+  }, [selectedCategory]);
+
+  // Format categories for the RestaurantMenu component
+  const formattedCategories = categories.map((category) => ({
+    id: category.id,
+    title: category.name,
+    icon: getCategoryIcon(category.name),
+    event: `food-tab-${category.id}`,
+    items: [], // This will be populated when a category is selected
+  }));
+
+  // Handle category selection
+  const handleCategorySelect = (categoryId) => {
+    setSelectedCategory(categoryId);
+  };
+
+  // Format pizzas for the RestaurantMenu component
+  const formatPizzasForMenu = (pizzas) => {
+    return pizzas.map((pizza) => ({
+      id: pizza.id,
+      title: pizza.name,
+      price: getBasePrice(pizza.sizes),
+      decs: pizza.description || "Delicious pizza with fresh ingredients",
+      img: pizza.imageUrl
+        ? `/uploads/${pizza.imageUrl}`
+        : "/assets/images/food/pm-food1.png",
+      ingredients: [], // You can add default ingredients if needed
+      toppings: [], // You can add default toppings if needed
+    }));
+  };
+
+  // Update the items for the selected category
+  const menuItems = formattedCategories.map((category) => {
+    if (category.id === selectedCategory) {
+      return {
+        ...category,
+        items: formatPizzasForMenu(pizzas),
+      };
+    }
+    return category;
+  });
+
   return (
     <WellFoodLayout>
       {/* <PageBanner pageTitle={"Menu pizza"} /> */}
-      {/* <AboutUs /> */}
-      {/* Headline area start */}
       {/* <Headline /> */}
-      {/* Headline Area end */}
-      {/* Restaurant Menu Area start */}
-      <RestaurantMenu menus={items} />
-      {/* Restaurant Menu Area end */}
-      {/* Offer Card Area start */}
+      <RestaurantMenu
+        menus={menuItems}
+        loading={loading}
+        error={error}
+        onCategorySelect={handleCategorySelect}
+        selectedCategory={selectedCategory}
+      />
       {/* <OfferCard /> */}
-      
-      {/* Offer Card Area end */}
     </WellFoodLayout>
   );
 };
-export default page;
+
+export default MenuPizzaPage;
