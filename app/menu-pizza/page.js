@@ -102,17 +102,37 @@ const MenuPizzaPage = () => {
 
   // Format pizzas for the RestaurantMenu component
   const formatPizzasForMenu = (pizzas) => {
-    return pizzas.map((pizza) => ({
-      id: pizza.id,
-      title: pizza.name,
-      price: getBasePrice(pizza.sizes),
-      decs: pizza.description || "Delicious pizza with fresh ingredients",
-      img: pizza.imageUrl
-        ? `/uploads/${pizza.imageUrl}`
-        : "/assets/images/food/pm-food1.png",
-      ingredients: [], // You can add default ingredients if needed
-      toppings: [], // You can add default toppings if needed
-    }));
+    return pizzas.map((pizza) => {
+      // Parse sizes JSON string if it's a string
+      const sizes =
+        typeof pizza.sizes === "string" ? JSON.parse(pizza.sizes) : pizza.sizes;
+
+      return {
+        id: pizza.id,
+        title: pizza.name,
+        price: sizes.SMALL || "10", // Default to small size price
+        decs: pizza.description || "Delicious pizza with fresh ingredients",
+        img: pizza.imageUrl
+          ? `/uploads/${pizza.imageUrl}`
+          : "/assets/images/food/pm-food1.png",
+        ingredients:
+          pizza.defaultIngredients?.map((ing) => ({
+            id: ing.ingredientId,
+            name: ing.name,
+            price: ing.price,
+            quantity: ing.quantity,
+            included: ing.include,
+          })) || [],
+        toppings:
+          pizza.defaultToppings?.map((top) => ({
+            id: top.toppingId,
+            name: top.name,
+            price: top.price,
+            quantity: top.quantity,
+            included: top.include,
+          })) || [],
+      };
+    });
   };
 
   // Update the items for the selected category

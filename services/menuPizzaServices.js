@@ -32,3 +32,23 @@ export const fetchPizzaById = async (pizzaId) => {
     throw error;
   }
 };
+
+export const fetchAllToppings = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/getAllToppings`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching toppings:", error);
+    throw error;
+  }
+};
+
+export const fetchAllIngredients = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/getAllIngredients`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching ingredients:", error);
+    throw error;
+  }
+};

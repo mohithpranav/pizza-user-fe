@@ -8,113 +8,149 @@ import { useDispatch } from "react-redux";
 import { addItem } from "../../features/cart/cartSlice.js";
 import React, { useEffect, useState, useRef } from "react";
 import { Nav, Tab } from "react-bootstrap";
+import {
+  fetchPizzaById,
+  fetchAllToppings,
+  fetchAllIngredients,
+} from "@/services/menuPizzaServices";
+import { API_URL } from "@/services/config";
 
 const page = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const title = searchParams.get("title");
-  const desc = searchParams.get("desc");
-  const combo = searchParams.get("combo");
-  const img = searchParams.get("img");
-  const BasePrice = Number(searchParams.get("price"));
+  const pizzaId = searchParams.get("id");
+  const [pizza, setPizza] = useState(null);
+  const [allToppings, setAllToppings] = useState([]);
+  const [allIngredients, setAllIngredients] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [pizzaData, toppingsData, ingredientsData] = await Promise.all([
+          fetchPizzaById(pizzaId),
+          fetchAllToppings(),
+          fetchAllIngredients(),
+        ]);
+
+        if (pizzaData.data) {
+          setPizza(pizzaData.data);
+        }
+        if (toppingsData.data) {
+          setAllToppings(toppingsData.data);
+        }
+        if (ingredientsData.data) {
+          setAllIngredients(ingredientsData.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (pizzaId) {
+      fetchData();
+    }
+  }, [pizzaId]);
 
   const [ingredients, setIngredients] = useState([]);
-  const [Toppings, setToppings] = useState([]);
+  const [toppings, setToppings] = useState([]);
   const [initialBasePrice, setInitialBasePrice] = useState(0);
   const [tempPrice, setTempPrice] = useState(0);
   const [finalPrice, setFinalPrice] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const hasSetInitialPrice = useRef(false);
-  const [isCombo, setIsCombo] = useState(false); // Use state for reactivity
+  const [isCombo, setIsCombo] = useState(false);
 
-  // Load ingredients from searchParams
-
+  // Initialize ingredients and toppings when pizza data is loaded
   useEffect(() => {
-    if (combo == "True") {
-      setIsCombo(true);
-    }
-  }, [combo, isCombo]);
+    if (pizza && allIngredients.length > 0 && allToppings.length > 0) {
+      // Map all ingredients with default quantities from pizza
+      const mappedIngredients = allIngredients.map((ing) => {
+        const defaultIng = pizza.defaultIngredients?.find(
+          (di) => di.ingredientId === ing.id
+        );
+        return {
+          id: ing.id,
+          name: ing.name,
+          price: Number(ing.price),
+          quantity: defaultIng ? defaultIng.quantity : 0,
+          included: defaultIng ? defaultIng.include : false,
+        };
+      });
 
+      // Map all toppings with default quantities from pizza
+      const mappedToppings = allToppings.map((top) => {
+        const defaultTop = pizza.defaultToppings?.find(
+          (dt) => dt.toppingId === top.id
+        );
+        return {
+          id: top.id,
+          name: top.name,
+          price: Number(top.price),
+          quantity: defaultTop ? defaultTop.quantity : 0,
+          included: defaultTop ? defaultTop.include : false,
+        };
+      });
+
+      setIngredients(mappedIngredients);
+      setToppings(mappedToppings);
+
+      // Calculate initial base price
+      const sizes =
+        typeof pizza.sizes === "string" ? JSON.parse(pizza.sizes) : pizza.sizes;
+      const basePrice = Number(sizes.SMALL);
+      setInitialBasePrice(basePrice);
+      setFinalPrice(basePrice);
+      setTempPrice(basePrice);
+    }
+  }, [pizza, allIngredients, allToppings]);
+
+  // Update price when ingredients or toppings change
   useEffect(() => {
-    const ingredientsString = searchParams.get("ingredients");
-    if (ingredientsString) {
-      const parsedIngredients = JSON.parse(ingredientsString);
-      setIngredients(parsedIngredients);
+    if (initialBasePrice > 0) {
+      const basePrice = initialBasePrice;
+      let totalAddedPrice = 0;
+      let totalRemovedPrice = 0;
+
+      // Calculate added and removed prices for ingredients
+      ingredients.forEach((ing) => {
+        const defaultIng = pizza.defaultIngredients?.find(
+          (di) => di.ingredientId === ing.id
+        );
+        const defaultQuantity = defaultIng ? defaultIng.quantity : 0;
+
+        if (ing.quantity > defaultQuantity) {
+          totalAddedPrice += (ing.quantity - defaultQuantity) * ing.price;
+        } else if (ing.quantity < defaultQuantity) {
+          totalRemovedPrice += (defaultQuantity - ing.quantity) * ing.price;
+        }
+      });
+
+      // Calculate added and removed prices for toppings
+      toppings.forEach((top) => {
+        const defaultTop = pizza.defaultToppings?.find(
+          (dt) => dt.toppingId === top.id
+        );
+        const defaultQuantity = defaultTop ? defaultTop.quantity : 0;
+
+        if (top.quantity > defaultQuantity) {
+          totalAddedPrice += (top.quantity - defaultQuantity) * top.price;
+        } else if (top.quantity < defaultQuantity) {
+          totalRemovedPrice += (defaultQuantity - top.quantity) * top.price;
+        }
+      });
+
+      const newPrice = basePrice - totalRemovedPrice + totalAddedPrice;
+      setTempPrice(newPrice);
+      setFinalPrice(Math.max(newPrice, basePrice));
     }
-  }, [searchParams]);
+  }, [ingredients, toppings, initialBasePrice, pizza]);
 
-  // Load toppings from searchParams
-  useEffect(() => {
-    const ToppingsString = searchParams.get("toppings");
-    if (ToppingsString) {
-      const parsedToppings = JSON.parse(ToppingsString);
-      setToppings(parsedToppings);
-    }
-  }, [searchParams]);
-
-  // Calculate the initial price only once after data is loaded
-  useEffect(() => {
-    if (
-      !hasSetInitialPrice.current &&
-      (ingredients.length > 0 || Toppings.length > 0)
-    ) {
-      const basePrice =
-        ingredients.reduce(
-          (sum, ingredient) =>
-            ingredient.quantity > 0
-              ? sum + Number(ingredient.price) * Number(ingredient.quantity)
-              : sum,
-          0
-        ) +
-        Toppings.reduce(
-          (sum, topping) =>
-            topping.quantity > 0
-              ? sum + Number(topping.price) * Number(topping.quantity)
-              : sum,
-          0
-        ) +
-        BasePrice;
-
-      setInitialBasePrice(basePrice * quantity);
-      setFinalPrice(basePrice * quantity);
-      setTempPrice(basePrice * quantity);
-
-      hasSetInitialPrice.current = true;
-    }
-  }, [ingredients, Toppings, BasePrice, quantity]);
-
-  // Update tempPrice and finalPrice dynamically
-  useEffect(() => {
-    const basePrice =
-      ingredients.reduce(
-        (sum, ingredient) =>
-          ingredient.quantity > 0
-            ? sum + Number(ingredient.price) * Number(ingredient.quantity)
-            : sum,
-        0
-      ) +
-      Toppings.reduce(
-        (sum, topping) =>
-          topping.quantity > 0
-            ? sum + Number(topping.price) * Number(topping.quantity)
-            : sum,
-        0
-      ) +
-      BasePrice;
-
-    setTempPrice(basePrice * quantity);
-
-    if (basePrice > initialBasePrice) {
-      setFinalPrice(basePrice * quantity);
-    } else {
-      setFinalPrice(initialBasePrice * quantity);
-    }
-  }, [ingredients, Toppings, BasePrice, initialBasePrice, quantity]);
-
-  const maxQuantity = 3;
-  const maxPizzaQuantity = 9;
+  const maxQuantity = 5;
 
   const updateQuantity = (index, operation) => {
     setIngredients((prevIngredients) =>
@@ -133,35 +169,17 @@ const page = () => {
   };
 
   const updatedToppingQuantity = (index, operation) => {
-    setToppings((prevTopping) =>
-      prevTopping.map((Toppings, idx) =>
+    setToppings((prevToppings) =>
+      prevToppings.map((topping, idx) =>
         idx === index
           ? {
-              ...Toppings,
+              ...topping,
               quantity:
                 operation === "add"
-                  ? Math.min(Toppings.quantity + 1, maxQuantity)
-                  : Math.max(Toppings.quantity - 1, 0),
+                  ? Math.min(topping.quantity + 1, maxQuantity)
+                  : Math.max(topping.quantity - 1, 0),
             }
-          : Toppings
-      )
-    );
-  };
-
-  const removeIngredient = (index) => {
-    setIngredients((prevIngredients) =>
-      prevIngredients.map((ingredient, idx) =>
-        idx === index
-          ? { ...ingredient, quantity: 0, included: false }
-          : ingredient
-      )
-    );
-  };
-
-  const removeToppings = (index) => {
-    setToppings((prevToppings) =>
-      prevToppings.map((Topping, idx) =>
-        idx === index ? { ...Topping, quantity: 0, included: false } : Topping
+          : topping
       )
     );
   };
@@ -183,13 +201,21 @@ const page = () => {
   const [size, setSize] = useState("Small");
 
   const getPrice = () => {
+    const sizes =
+      typeof pizza?.sizes === "string" ? JSON.parse(pizza.sizes) : pizza?.sizes;
     switch (size) {
       case "Medium":
-        return Number(finalPrice + 4 * quantity);
+        return Number(
+          finalPrice +
+            (Number(sizes?.MEDIUM || 0) - Number(sizes?.SMALL || 0)) * quantity
+        );
       case "Large":
-        return Number(finalPrice + 6 * quantity);
+        return Number(
+          finalPrice +
+            (Number(sizes?.LARGE || 0) - Number(sizes?.SMALL || 0)) * quantity
+        );
       default:
-        return Number(finalPrice);
+        return Number(finalPrice * quantity);
     }
   };
 
@@ -197,12 +223,13 @@ const page = () => {
     if (quantity > 0) {
       dispatch(
         addItem({
-          title: title,
-          img: img,
+          id: pizzaId,
+          title: pizza?.name,
+          img: pizza?.imageUrl,
           price: Number(getPrice()),
           eachprice: Number(getPrice() / quantity),
           ingredients: ingredients,
-          toppings: Toppings,
+          toppings: toppings,
           quantity: Number(quantity),
           size: size,
         })
@@ -212,12 +239,37 @@ const page = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <WellFoodLayout>
+        <div className="container">
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </WellFoodLayout>
+    );
+  }
+
+  if (!pizza) {
+    return (
+      <WellFoodLayout>
+        <div className="container">
+          <div className="text-center py-5">
+            <h2>Pizza not found</h2>
+          </div>
+        </div>
+      </WellFoodLayout>
+    );
+  }
+
   return (
     <WellFoodLayout>
       <section className="product-details pb-10 pt-130 rpt-100">
         <div className="container">
           <div className="row">
-            {/* Product Image - Enhanced with shadow and larger size */}
             <div className="col-lg-6">
               <div
                 className="product-details-image rmb-55"
@@ -228,8 +280,8 @@ const page = () => {
                 <div className="product-image-wrapper">
                   <img
                     className="product-image"
-                    src={img}
-                    alt={title}
+                    src={`${API_URL}/images/pizza-${pizza.id}.png`}
+                    alt={pizza.name}
                     style={{
                       width: "100%",
                       height: "auto",
@@ -242,7 +294,6 @@ const page = () => {
               </div>
             </div>
 
-            {/* Product Details */}
             <div className="col-lg-6">
               <div
                 className="product-details-content"
@@ -259,41 +310,17 @@ const page = () => {
                       color: "#333",
                     }}
                   >
-                    {title}
+                    {pizza.name}
                   </h2>
                   <p
                     className="mb-4"
                     style={{ fontSize: "1.2rem", color: "#666" }}
                   >
-                    {desc}
+                    {pizza.description ||
+                      "Delicious pizza with fresh ingredients"}
                   </p>
 
-                  {/* Mobile view controls */}
-                  <div className="mobil-quantity-controls d-block d-lg-none">
-                    <div className="mobil-custom-quantity">
-                      <h3 className="mob-pizza-title">{title}</h3>
-                      <div className="mob-quantity-controls">
-                        <h3 className="mob-quantity-label">Qty</h3>
-                        <button
-                          className="mob-button"
-                          disabled={quantity <= 0}
-                          onClick={handleDecrease}
-                        >
-                          -
-                        </button>
-                        <span className="mob-quantity-display">{quantity}</span>
-                        <button
-                          className="mob-button"
-                          disabled={quantity >= maxPizzaQuantity}
-                          onClick={handleIncrease}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Size Selection - Enhanced with better styling */}
+                  {/* Size Selection */}
                   {!isCombo && (
                     <div className="size-container mb-4">
                       <h5
@@ -347,7 +374,7 @@ const page = () => {
                   )}
                 </div>
 
-                {/* Price Display - Enhanced */}
+                {/* Price Display */}
                 <div className="price-container mb-4">
                   <h5 style={{ fontSize: "1.2rem", fontWeight: "600" }}>
                     Total Price
@@ -366,7 +393,7 @@ const page = () => {
                   </span>
                 </div>
 
-                {/* Quantity Controls - Enhanced */}
+                {/* Quantity Controls */}
                 <form className="add-to-cart mb-4">
                   <div className="quantity-controls">
                     <div
@@ -428,13 +455,10 @@ const page = () => {
                             border: "none",
                             background: "#f5f5f5",
                             fontSize: "1.2rem",
-                            cursor:
-                              quantity >= maxPizzaQuantity
-                                ? "not-allowed"
-                                : "pointer",
-                            opacity: quantity >= maxPizzaQuantity ? "0.5" : "1",
+                            cursor: quantity >= 10 ? "not-allowed" : "pointer",
+                            opacity: quantity >= 10 ? "0.5" : "1",
                           }}
-                          disabled={quantity >= maxPizzaQuantity}
+                          disabled={quantity >= 10}
                           onClick={handleIncrease}
                         >
                           +
@@ -443,7 +467,7 @@ const page = () => {
                     </div>
                   </div>
 
-                  {/* Add to Cart Button - Enhanced */}
+                  {/* Add to Cart Button */}
                   <Link href="/cart">
                     <button
                       type="submit"
@@ -470,7 +494,7 @@ const page = () => {
                   </Link>
                 </form>
 
-                {/* Ingredients Section - Enhanced */}
+                {/* Ingredients Section */}
                 {!isCombo && (
                   <div className="ingredients-section mb-4">
                     <h5
@@ -567,24 +591,6 @@ const page = () => {
                                 +
                               </button>
                             </div>
-                            <button
-                              className="remove-btn"
-                              onClick={() => removeIngredient(index)}
-                              style={{
-                                width: "30px",
-                                height: "30px",
-                                border: "none",
-                                borderRadius: "50%",
-                                background: "#ff6b3520",
-                                color: "#ff6b35",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <i className="fas fa-trash-alt"></i>
-                            </button>
                           </div>
                         </li>
                       ))}
@@ -592,7 +598,7 @@ const page = () => {
                   </div>
                 )}
 
-                {/* Toppings Section - Enhanced */}
+                {/* Toppings Section */}
                 {!isCombo && (
                   <div className="toppings-section mb-4">
                     <h5
@@ -608,7 +614,7 @@ const page = () => {
                       className="toppings-list"
                       style={{ listStyle: "none", padding: "0" }}
                     >
-                      {Toppings.map((topping, index) => (
+                      {toppings.map((topping, index) => (
                         <li
                           key={index}
                           className="topping-item"
@@ -690,93 +696,12 @@ const page = () => {
                                 +
                               </button>
                             </div>
-                            <button
-                              className="remove-btn"
-                              onClick={() => removeToppings(index)}
-                              style={{
-                                width: "30px",
-                                height: "30px",
-                                border: "none",
-                                borderRadius: "50%",
-                                background: "#ff6b3520",
-                                color: "#ff6b35",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <i className="fas fa-trash-alt"></i>
-                            </button>
                           </div>
                         </li>
                       ))}
                     </ul>
                   </div>
                 )}
-
-                {/* Categories and Tags */}
-                <ul
-                  className="category-tags"
-                  style={{
-                    padding: "20px 0",
-                    margin: "0",
-                    borderTop: "1px solid #eee",
-                    listStyle: "none",
-                  }}
-                >
-                  <li
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "5px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    <h6 style={{ margin: "0", fontWeight: "600" }}>
-                      Categories
-                    </h6>{" "}
-                    :
-                    <a
-                      href="#"
-                      style={{
-                        color: "#ff6b35",
-                        textDecoration: "none",
-                        background: "#fff4f0",
-                        padding: "3px 10px",
-                        borderRadius: "4px",
-                      }}
-                    >
-                      Restaurant
-                    </a>
-                  </li>
-                  <li
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "5px",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <h6 style={{ margin: "0", fontWeight: "600" }}>Tags </h6> :
-                    {["Pizza", "Burger", "Soup"].map((tag) => (
-                      <a
-                        key={tag}
-                        href="#"
-                        style={{
-                          color: "#ff6b35",
-                          textDecoration: "none",
-                          background: "#fff4f0",
-                          padding: "3px 10px",
-                          borderRadius: "4px",
-                          marginRight: "5px",
-                        }}
-                      >
-                        {tag}
-                      </a>
-                    ))}
-                  </li>
-                </ul>
               </div>
             </div>
           </div>
