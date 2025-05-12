@@ -17,19 +17,17 @@ const getCategoryIcon = (categoryName) => {
     Vegetarian: "flaticon-broccoli",
     Seafood: "flaticon-crab",
     Drinks: "flaticon-poinsettia",
-    // Add more mappings as needed
   };
-
-  return iconMap[categoryName] || "flaticon-cupcake"; // Default icon
+  return iconMap[categoryName] || "flaticon-cupcake";
 };
 
 // Helper function to get base price from sizes
 const getBasePrice = (sizes) => {
   try {
-    const sizeObj = typeof sizes === "string" ? JSON.parse(sizes) : sizes;
-    return sizeObj.SMALL || "10"; // Default to small size price or 10
+    const sizeObj = typeof sizes === "string" ? JSON.parse(sizes) : sizes || {};
+    return sizeObj.SMALL || sizeObj.small || "10";
   } catch (e) {
-    return "10"; // Default price if parsing fails
+    return "10";
   }
 };
 
@@ -46,11 +44,15 @@ const MenuPizzaPage = () => {
       try {
         setLoading(true);
         const response = await fetchAllCategories();
-        if (response && response.data) {
+        console.log("Categories API Response:", response);
+
+        if (response?.data) {
           setCategories(response.data);
-          // Set the first category as selected by default
+          // Set the first category as selected if available
           if (response.data.length > 0) {
-            setSelectedCategory(response.data[0].id);
+            const firstCategoryId = String(response.data[0].id);
+            console.log("Setting initial category:", firstCategoryId);
+            setSelectedCategory(firstCategoryId);
           }
         }
       } catch (err) {
@@ -60,21 +62,37 @@ const MenuPizzaPage = () => {
         setLoading(false);
       }
     };
-
     loadCategories();
   }, []);
 
-  // Fetch pizzas when a category is selected
+  // Fetch pizzas when selectedCategory changes
   useEffect(() => {
     const loadPizzas = async () => {
-      if (!selectedCategory) return;
+      if (!selectedCategory) {
+        console.log("No category selected, skipping pizza load");
+        return;
+      }
 
       try {
         setLoading(true);
+        console.log("Loading pizzas for category:", selectedCategory);
         const response = await fetchPizzasByCategory(selectedCategory);
-        if (response && response.data && response.data.pizzas) {
-          setPizzas(response.data.pizzas);
+        console.log("Pizza API Response:", response);
+
+        // Handle different possible response structures
+        let pizzasData = [];
+        if (response?.data) {
+          if (Array.isArray(response.data)) {
+            pizzasData = response.data;
+          } else if (
+            response.data.pizzas &&
+            Array.isArray(response.data.pizzas)
+          ) {
+            pizzasData = response.data.pizzas;
+          }
         }
+        console.log("Processed pizzas data:", pizzasData);
+        setPizzas(pizzasData);
       } catch (err) {
         console.error("Error loading pizzas:", err);
         setError("Failed to load pizzas. Please try again later.");
@@ -86,64 +104,75 @@ const MenuPizzaPage = () => {
     loadPizzas();
   }, [selectedCategory]);
 
-  // Format categories for the RestaurantMenu component
-  const formattedCategories = categories.map((category) => ({
-    id: category.id,
-    title: category.name,
-    icon: getCategoryIcon(category.name),
-    event: `food-tab-${category.id}`,
-    items: [], // This will be populated when a category is selected
-  }));
+  // Safely format categories
+  const formattedCategories = Array.isArray(categories)
+    ? categories.map((category) => ({
+        id: String(category?.id || Math.random().toString()),
+        title: category?.name || "Unnamed Category",
+        icon: getCategoryIcon(category?.name),
+        event: `food-tab-${category?.id || ""}`,
+        items: [],
+      }))
+    : [];
 
-  // Handle category selection
-  const handleCategorySelect = (categoryId) => {
-    setSelectedCategory(categoryId);
-  };
-
-  // Format pizzas for the RestaurantMenu component
+  // Safely format pizzas
   const formatPizzasForMenu = (pizzas) => {
-    return pizzas.map((pizza) => {
-      // Parse sizes JSON string if it's a string
-      const sizes =
-        typeof pizza.sizes === "string" ? JSON.parse(pizza.sizes) : pizza.sizes;
+    console.log("Formatting pizzas:", pizzas);
+    if (!Array.isArray(pizzas)) {
+      console.log("Pizzas is not an array, returning empty array");
+      return [];
+    }
+
+    const formattedPizzas = pizzas.map((pizza) => {
+      console.log("Processing pizza:", pizza);
+      const sizes = pizza?.sizes
+        ? typeof pizza.sizes === "string"
+          ? JSON.parse(pizza.sizes)
+          : pizza.sizes
+        : {};
 
       return {
-        id: pizza.id,
-        title: pizza.name,
-        price: sizes.SMALL || "10", // Default to small size price
-        decs: pizza.description || "Delicious pizza with fresh ingredients",
-        img: pizza.imageUrl
+        id: pizza?.id || Math.random().toString(),
+        title: pizza?.name || "Unnamed Pizza",
+        price: getBasePrice(sizes),
+        decs: pizza?.description || "Delicious pizza with fresh ingredients",
+        img: pizza?.imageUrl
           ? `/uploads/${pizza.imageUrl}`
           : "/assets/images/food/pm-food1.png",
-        ingredients:
-          pizza.defaultIngredients?.map((ing) => ({
-            id: ing.ingredientId,
-            name: ing.name,
-            price: ing.price,
-            quantity: ing.quantity,
-            included: ing.include,
-          })) || [],
-        toppings:
-          pizza.defaultToppings?.map((top) => ({
-            id: top.toppingId,
-            name: top.name,
-            price: top.price,
-            quantity: top.quantity,
-            included: top.include,
-          })) || [],
+        ingredients: Array.isArray(pizza?.defaultIngredients)
+          ? pizza.defaultIngredients.map((ing) => ({
+              id: ing?.ingredientId || Math.random().toString(),
+              name: ing?.name || "",
+              price: ing?.price || 0,
+              quantity: ing?.quantity || 0,
+              included: ing?.include !== false,
+            }))
+          : [],
+        toppings: Array.isArray(pizza?.defaultToppings)
+          ? pizza.defaultToppings.map((top) => ({
+              id: top?.toppingId || Math.random().toString(),
+              name: top?.name || "",
+              price: top?.price || 0,
+              quantity: top?.quantity || 0,
+              included: top?.include !== false,
+            }))
+          : [],
       };
     });
+
+    console.log("Formatted pizzas:", formattedPizzas);
+    return formattedPizzas;
   };
 
-  // Update the items for the selected category
+  // Create menu items with proper fallbacks
   const menuItems = formattedCategories.map((category) => {
-    if (category.id === selectedCategory) {
-      return {
-        ...category,
-        items: formatPizzasForMenu(pizzas),
-      };
-    }
-    return category;
+    const items =
+      category.id === selectedCategory ? formatPizzasForMenu(pizzas) : [];
+    console.log(`Menu items for category ${category.id}:`, items);
+    return {
+      ...category,
+      items,
+    };
   });
 
   return (
@@ -154,7 +183,7 @@ const MenuPizzaPage = () => {
         menus={menuItems}
         loading={loading}
         error={error}
-        onCategorySelect={handleCategorySelect}
+        onCategorySelect={(id) => setSelectedCategory(String(id))}
         selectedCategory={selectedCategory}
       />
       {/* <OfferCard /> */}

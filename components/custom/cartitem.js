@@ -17,7 +17,12 @@ const CartItem = ({
       <div className="cart-item-details">
         <h3 className="cart-item-title">{title}</h3>
         <p className="cart-item-title">{size}</p>
-        <p className="cart-item-ingredients">  Ingredients: {ingredients?.map((ingredient) => ingredient.name).join(", ") || "No ingredients"}</p>
+        <p className="cart-item-ingredients">
+          {" "}
+          Ingredients:{" "}
+          {ingredients?.map((ingredient) => ingredient.name).join(", ") ||
+            "No ingredients"}
+        </p>
         <div className="cart-item-actions">
           <div className="quantity-controls">
             <button className="quantity-btn" onClick={onDecrement}>

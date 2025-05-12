@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Nav, Tab } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { API_URL } from "@/services/config";
 
 const calculatePrice = (basePrice = 0, ingredients = [], toppings = []) => {
@@ -55,15 +55,31 @@ const RestaurantMenu = ({
     menus.length > 0 ? menus[0].event : ""
   );
 
+  // Update activeTab when selectedCategory changes
+  useEffect(() => {
+    if (selectedCategory && menus.length > 0) {
+      const matchingMenu = menus.find((menu) => menu.id === selectedCategory);
+      if (matchingMenu) {
+        setActiveTab(matchingMenu.event);
+      }
+    }
+  }, [selectedCategory, menus]);
+
   // Handle tab change
   const handleTabChange = (eventKey) => {
+    console.log("Tab changed to:", eventKey);
     setActiveTab(eventKey);
     // Extract category ID from event key (format: food-tab-{categoryId})
     const categoryId = eventKey.replace("food-tab-", "");
+    console.log("Selected category ID:", categoryId);
     if (onCategorySelect) {
       onCategorySelect(categoryId);
     }
   };
+
+  console.log("Current menus:", menus);
+  console.log("Active tab:", activeTab);
+  console.log("Selected category:", selectedCategory);
 
   return (
     <section className="restaurant-menu-area pb-100 rpb-70 rel z-1">
@@ -190,7 +206,7 @@ const RestaurantMenu = ({
                   </div>
                 ) : (
                   <div className="text-center py-5">
-                    <p>No pizzas available in this category.</p>
+                    {/* <p>Loading...</p> */}
                   </div>
                 )}
               </Tab.Pane>
