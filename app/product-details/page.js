@@ -14,6 +14,7 @@ import {
   fetchAllIngredients,
 } from "@/services/menuPizzaServices";
 import { API_URL } from "@/services/config";
+import PizzaLoader from "@/components/pizzaLoader";
 
 const page = () => {
   const dispatch = useDispatch();
@@ -239,18 +240,8 @@ const page = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <WellFoodLayout>
-        <div className="container">
-          <div className="text-center py-5">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </div>
-        </div>
-      </WellFoodLayout>
-    );
+  if (loading && !pizza) {
+    return <PizzaLoader />;
   }
 
   if (!pizza) {
@@ -267,6 +258,7 @@ const page = () => {
 
   return (
     <WellFoodLayout>
+      {loading && <PizzaLoader />}
       <section className="product-details pb-10 pt-130 rpt-100">
         <div className="container">
           <div className="row">

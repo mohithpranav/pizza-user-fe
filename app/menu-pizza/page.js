@@ -5,6 +5,7 @@ import OfferCard from "@/components/OfferCard";
 import PageBanner from "@/components/PageBanner";
 import RestaurantMenu from "@/components/RestaurantMenu";
 import WellFoodLayout from "@/layout/WellFoodLayout";
+import PizzaLoader from "@/components/pizzaLoader";
 import {
   fetchAllCategories,
   fetchPizzasByCategory,
@@ -177,6 +178,7 @@ const MenuPizzaPage = () => {
 
   return (
     <WellFoodLayout>
+      {loading && <PizzaLoader />}
       {/* <PageBanner pageTitle={"Menu pizza"} /> */}
       {/* <Headline /> */}
       <RestaurantMenu

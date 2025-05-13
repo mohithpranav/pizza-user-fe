@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { addItem } from "../../features/cart/cartSlice.js";
 import React, { useEffect, useState } from "react";
 import { API_URL } from "@/services/config";
+import PizzaLoader from "@/components/pizzaLoader";
 
 const page = () => {
   const dispatch = useDispatch();
@@ -83,13 +84,7 @@ const page = () => {
   if (loading) {
     return (
       <WellFoodLayout>
-        <div className="container">
-          <div className="text-center py-5">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </div>
-        </div>
+        <PizzaLoader forceDuration={4000} />
       </WellFoodLayout>
     );
   }
